@@ -151,31 +151,35 @@ namespace EmployeeManagement.Forms
                                 txtFullName.Text = reader.GetString("full_name");
                                 dtpDateOfBirth.Value = reader.GetDateTime("date_of_birth");
                                 cmbGender.Text = reader.GetString("gender");
-                                // Load nullable string fields with safe casting using column index
+                                // Load nullable fields by name to avoid column index mismatch
                                 try
                                 {
-                                    txtAddress.Text = reader.IsDBNull(4) ? "" : reader.GetString(4); // address column
+                                    int addrIdx = reader.GetOrdinal("address");
+                                    txtAddress.Text = reader.IsDBNull(addrIdx) ? "" : reader.GetString(addrIdx);
                                 }
                                 catch { txtAddress.Text = ""; }
                                 
                                 try
                                 {
-                                    txtPhoneNumber.Text = reader.IsDBNull(5) ? "" : reader.GetString(5); // phone_number column
+                                    int phoneIdx = reader.GetOrdinal("phone_number");
+                                    txtPhoneNumber.Text = reader.IsDBNull(phoneIdx) ? "" : reader.GetString(phoneIdx);
                                 }
                                 catch { txtPhoneNumber.Text = ""; }
                                 
                                 try
                                 {
-                                    txtEmail.Text = reader.IsDBNull(6) ? "" : reader.GetString(6); // email column
+                                    int emailIdx = reader.GetOrdinal("email");
+                                    txtEmail.Text = reader.IsDBNull(emailIdx) ? "" : reader.GetString(emailIdx);
                                 }
                                 catch { txtEmail.Text = ""; }
                                 
                                 // Load department and position with safe casting using column index
                                 try
                                 {
-                                    if (!reader.IsDBNull(7)) // department_id column
+                                    int deptIdx = reader.GetOrdinal("department_id");
+                                    if (!reader.IsDBNull(deptIdx))
                                     {
-                                        var deptId = reader.GetInt32(7);
+                                        var deptId = reader.GetInt32(deptIdx);
                                         cmbDepartment.SelectedValue = deptId;
                                     }
                                 }
@@ -183,9 +187,10 @@ namespace EmployeeManagement.Forms
                                 
                                 try
                                 {
-                                    if (!reader.IsDBNull(8)) // position_id column
+                                    int posIdx = reader.GetOrdinal("position_id");
+                                    if (!reader.IsDBNull(posIdx))
                                     {
-                                        var posId = reader.GetInt32(8);
+                                        var posId = reader.GetInt32(posIdx);
                                         cmbPosition.SelectedValue = posId;
                                     }
                                 }
