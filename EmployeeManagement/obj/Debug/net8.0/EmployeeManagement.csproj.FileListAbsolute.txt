@@ -1,5 +1,0 @@
-/Users/lovanquyet/Desktop/Hoc/kiemtracuoimonlltq/EmployeeManagement/obj/Debug/net8.0/EmployeeManagement.csproj.AssemblyReference.cache
-/Users/lovanquyet/Desktop/Hoc/kiemtracuoimonlltq/EmployeeManagement/obj/Debug/net8.0/EmployeeManagement.GeneratedMSBuildEditorConfig.editorconfig
-/Users/lovanquyet/Desktop/Hoc/kiemtracuoimonlltq/EmployeeManagement/obj/Debug/net8.0/EmployeeManagement.AssemblyInfoInputs.cache
-/Users/lovanquyet/Desktop/Hoc/kiemtracuoimonlltq/EmployeeManagement/obj/Debug/net8.0/EmployeeManagement.AssemblyInfo.cs
-/Users/lovanquyet/Desktop/Hoc/kiemtracuoimonlltq/EmployeeManagement/obj/Debug/net8.0/EmployeeManagement.csproj.CoreCompileInputs.cache
