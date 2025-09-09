@@ -1,6 +1,7 @@
 using MySql.Data.MySqlClient;
 using System;
 using System.Configuration;
+using EmployeeManagement.Utils;
 
 namespace EmployeeManagement.Database
 {
@@ -9,7 +10,7 @@ namespace EmployeeManagement.Database
     /// </summary>
     public class DatabaseHelper
     {
-        private static string connectionString = "Server=localhost;Database=employee_management;Uid=root;Pwd=;";
+        private static string connectionString = "Server=localhost;Port=3306;Database=employee_management;Uid=root;Pwd=;SslMode=None;AllowPublicKeyRetrieval=True;";
         
         /// <summary>
         /// Lấy chuỗi kết nối database
@@ -28,7 +29,16 @@ namespace EmployeeManagement.Database
         /// <param name="password"></param>
         public static void SetConnectionString(string server, string database, string username, string password)
         {
-            connectionString = $"Server={server};Database={database};Uid={username};Pwd={password};";
+            connectionString = $"Server={server};Port=3306;Database={database};Uid={username};Pwd={password};SslMode=None;AllowPublicKeyRetrieval=True;";
+        }
+        
+        /// <summary>
+        /// Thiết lập chuỗi kết nối có cổng
+        /// </summary>
+        public static void SetConnectionString(string server, int port, string database, string username, string password, bool ssl = false)
+        {
+            var sslMode = ssl ? "Required" : "None";
+            connectionString = $"Server={server};Port={port};Database={database};Uid={username};Pwd={password};SslMode={sslMode};AllowPublicKeyRetrieval=True;";
         }
         
         /// <summary>
@@ -59,7 +69,7 @@ namespace EmployeeManagement.Database
             try
             {
                 // Kết nối tới MySQL server (không chỉ định database)
-                var serverConnectionString = "Server=localhost;Uid=root;Pwd=;";
+                var serverConnectionString = "Server=localhost;Port=3306;Uid=root;Pwd=;SslMode=None;AllowPublicKeyRetrieval=True;";
                 
                 using (var connection = new MySqlConnection(serverConnectionString))
                 {
@@ -82,6 +92,7 @@ namespace EmployeeManagement.Database
             }
             catch (Exception ex)
             {
+                Logger.Log(ex, "InitializeDatabase");
                 throw new Exception($"Lỗi khởi tạo database: {ex.Message}");
             }
         }
@@ -101,7 +112,7 @@ namespace EmployeeManagement.Database
                     role ENUM('Admin', 'User') NOT NULL DEFAULT 'User',
                     created_date DATETIME DEFAULT CURRENT_TIMESTAMP,
                     is_active BOOLEAN DEFAULT TRUE
-                )";
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
             
             // Bảng Departments
             var createDepartmentsTable = @"
@@ -112,7 +123,7 @@ namespace EmployeeManagement.Database
                     manager_id INT,
                     created_date DATETIME DEFAULT CURRENT_TIMESTAMP,
                     is_active BOOLEAN DEFAULT TRUE
-                )";
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
             
             // Bảng Positions
             var createPositionsTable = @"
@@ -124,7 +135,7 @@ namespace EmployeeManagement.Database
                     max_salary DECIMAL(15,2) DEFAULT 0,
                     created_date DATETIME DEFAULT CURRENT_TIMESTAMP,
                     is_active BOOLEAN DEFAULT TRUE
-                )";
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
             
             // Bảng Employees
             var createEmployeesTable = @"
@@ -145,9 +156,9 @@ namespace EmployeeManagement.Database
                     allowance DECIMAL(15,2) DEFAULT 0,
                     is_active BOOLEAN DEFAULT TRUE,
                     created_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    FOREIGN KEY (department_id) REFERENCES departments(id),
-                    FOREIGN KEY (position_id) REFERENCES positions(id)
-                )";
+                    FOREIGN KEY (department_id) REFERENCES departments(id) ON DELETE SET NULL ON UPDATE CASCADE,
+                    FOREIGN KEY (position_id) REFERENCES positions(id) ON DELETE SET NULL ON UPDATE CASCADE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
             
             // Bảng Attendance
             var createAttendanceTable = @"
@@ -160,9 +171,9 @@ namespace EmployeeManagement.Database
                     status ENUM('Present', 'Absent', 'Late', 'Leave') DEFAULT 'Present',
                     notes TEXT,
                     created_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    FOREIGN KEY (employee_id) REFERENCES employees(id),
+                    FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE ON UPDATE CASCADE,
                     UNIQUE KEY unique_employee_date (employee_id, date)
-                )";
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
             
             // Bảng Salary
             var createSalaryTable = @"
@@ -179,9 +190,9 @@ namespace EmployeeManagement.Database
                     total_salary DECIMAL(15,2) NOT NULL,
                     created_date DATETIME DEFAULT CURRENT_TIMESTAMP,
                     is_paid BOOLEAN DEFAULT FALSE,
-                    FOREIGN KEY (employee_id) REFERENCES employees(id),
+                    FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE ON UPDATE CASCADE,
                     UNIQUE KEY unique_employee_month_year (employee_id, month, year)
-                )";
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
             
             // Thực thi các lệnh tạo bảng
             var commands = new[] { createUsersTable, createDepartmentsTable, createPositionsTable, 

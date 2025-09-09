@@ -21,22 +21,24 @@ namespace EmployeeManagement.Forms
         public LoginForm()
         {
             InitializeComponent();
-            InitializeDatabase();
+            // Trì hoãn khởi tạo DB để không chặn hoặc làm thoát ứng dụng nếu MySQL chưa sẵn sàng
+            this.BeginInvoke(new Action(TryInitializeDatabaseSafe));
         }
         
         /// <summary>
         /// Khởi tạo database khi form load
         /// </summary>
-        private void InitializeDatabase()
+        private void TryInitializeDatabaseSafe()
         {
             try
             {
                 DatabaseHelper.InitializeDatabase();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MessageBox.Show($"Lỗi khởi tạo database: {ex.Message}", "Lỗi", 
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Không thoát ứng dụng; chỉ thông báo nhẹ để người dùng có thể đăng nhập sau khi sửa MySQL
+                MessageBox.Show("Không thể khởi tạo kết nối MySQL. Vui lòng kiểm tra dịch vụ và cấu hình.", 
+                    "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
         
@@ -63,8 +65,9 @@ namespace EmployeeManagement.Forms
                     CurrentUser = user;
                     this.Hide();
                     
-                    // Mở form chính dựa trên quyền của user
+                    // Mở form chính và đảm bảo đóng app khi MainForm đóng
                     var mainForm = new MainForm();
+                    mainForm.FormClosed += (s, args) => this.Close();
                     mainForm.Show();
                 }
                 else
