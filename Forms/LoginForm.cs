@@ -21,8 +21,8 @@ namespace EmployeeManagement.Forms
         public LoginForm()
         {
             InitializeComponent();
-            // Trì hoãn khởi tạo DB để không chặn hoặc làm thoát ứng dụng nếu MySQL chưa sẵn sàng
-            this.BeginInvoke(new Action(TryInitializeDatabaseSafe));
+            // Khởi tạo DB sau khi form đã được tạo handle để tránh lỗi BeginInvoke khi chưa có handle
+            this.Shown += (s, e) => TryInitializeDatabaseSafe();
         }
         
         /// <summary>
